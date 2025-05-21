@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schematic Converter</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      width: 100vw;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(ellipse at center, #0f0f1a 0%, #06060d 100%);
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 600px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #66ccff;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    p {
+      margin-bottom: 20px;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+      background-color: #222;
+      border: 1px solid #555;
+      border-radius: 5px;
+      color: #eee;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    #filename, #error {
+      margin-top: 10px;
+      font-weight: bold;
+      min-height: 1.2em;
+    }
+
+    #error {
+      color: #ff5555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>.Schematic To &gt;schem Bloxd Converter</h1>
+    <p>
+      This is a website where you can convert live <code>.schematic</code> files to <code>.schem</code> and use this website to convert them into bloxdschem:<br />
+      <a href="https://hansdiewurst.github.io/converter/" target="_blank" rel="noopener noreferrer">https://hansdiewurst.github.io/converter/</a>
+    </p>
+    <input type="file" id="fileInput" accept=".schematic" />
+    <div id="filename"></div>
+    <div id="error"></div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const filenameDiv = document.getElementById('filename');
+    const errorDiv = document.getElementById('error');
+
+    fileInput.addEventListener('change', () => {
+      errorDiv.textContent = '';
+      filenameDiv.textContent = '';
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      if (!file.name.toLowerCase().endsWith('.schematic')) {
+        errorDiv.textContent = 'Error: Only .schematic files are allowed.';
+        fileInput.value = '';
+        return;
+      }
+
+      filenameDiv.textContent = `Selected file: ${file.name}`;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const content = event.target.result;
+        const newName = file.name.replace(/atic$/i, '');
+        const blob = new Blob([content], { type: file.type });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = newName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  </script>
+</body>
+</html>
